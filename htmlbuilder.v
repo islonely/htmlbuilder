@@ -120,10 +120,8 @@ const(
 	}
 )
 
-/*
-HTMLBuilder is an extenseion of string.Builder which
-is targeted towards creating an HTML document in V
-*/
+// HTMLBuilder is an extenseion of string.Builder which
+// is targeted towards creating an HTML document in V
 pub struct HTMLBuilder {
 mut:
 	sb strings.Builder
@@ -131,27 +129,21 @@ mut:
 	indent_level u16
 }
 
-/*
-Attribute is an name and value which charactarize an HTML tag.
-*/
+// Attribute is an name and value which charactarize an HTML tag.
 pub struct Attribute {
 __global:
 	name string
 	content string
 }
 
-/*
-new_builder creates a new instances of Builder.
-*/
+// new_builder creates a new instances of Builder.
 pub fn new_builder() HTMLBuilder {
 	return {
 		sb: strings.new_builder(0)
 	}
 }
 
-/*
-open_tag creates an opening HTML tag based on inputs
-*/
+// open_tag creates an opening HTML tag based on inputs
 pub fn (mut hb HTMLBuilder) open_tag(tag string, attributes ...Attribute) {
 	mut tag_bldr := strings.new_builder(0)
 	// todo: auto indentation '\t'.repeat(tags2beclose.len)
@@ -172,16 +164,12 @@ pub fn (mut hb HTMLBuilder) open_tag(tag string, attributes ...Attribute) {
 	}
 }
 
-/*
-close_all_tags closes all tags that have been opened using open_tag
-*/
+// close_all_tags closes all tags that have been opened using open_tag
 pub fn (mut hb HTMLBuilder) close_all_tags() []string {
 	return hb.close_tags(hb.tags_to_be_closed.len)
 }
 
-/*
-close_tags closes n number of tags that have been opened using open_tag
-*/
+// close_tags closes n number of tags that have been opened using open_tag
 pub fn (mut hb HTMLBuilder) close_tags(n int) []string {
 	tags_reversed := hb.tags_to_be_closed.reverse()[0..n]
 	mut ret_tags := []string{}
@@ -192,9 +180,7 @@ pub fn (mut hb HTMLBuilder) close_tags(n int) []string {
 	return ret_tags
 }
 
-/*
-close_tag closes the last tag that was opened using open_tag
-*/
+// close_tag closes the last tag that was opened using open_tag
 pub fn (mut hb HTMLBuilder) close_tag() ?string {
 	if hb.tags_to_be_closed.len == 0 {
 		return none
@@ -207,25 +193,19 @@ pub fn (mut hb HTMLBuilder) close_tag() ?string {
 	return tag
 }
 
-/*
-write_comment creates an HTML comment with specified text inside
-*/
+// write_comment creates an HTML comment with specified text inside
 pub fn (mut hb HTMLBuilder) write_comment(s string) {
 	hb.writeln('<!-- $s -->')
 }
 
-/*
-save_index appends the contents of HTMLBuilder to 'index.html'
-then returns how many bytes were written
-*/
+// save_index appends the contents of HTMLBuilder to 'index.html'
+// then returns how many bytes were written
 pub fn (mut hb HTMLBuilder) save_index() ?int {
 	return hb.save('index.html')
 }
 
-/*
-save appends the contents of HTMLBuilder to specified file, then
-returns how many bytes were written
-*/
+// save appends the contents of HTMLBuilder to specified file, then
+// returns how many bytes were written
 pub fn (mut hb HTMLBuilder) save(path string) ?int {
 	mut file := os.open_append(path) or {
 		return err
@@ -241,17 +221,13 @@ pub fn (mut hb HTMLBuilder) save(path string) ?int {
 	return bytes_written
 }
 
-/*
-pop returns a copy of all of the accumulate buffer content
-*/
+// pop returns a copy of all of the accumulate buffer content
 pub fn (mut hb HTMLBuilder) pop() string {
 	return hb.sb.str()
 }
 
-/*
-str returns a copy of all of the accumulated buffer content,
-but does not empty the buffer.
-*/
+// str returns a copy of all of the accumulated buffer content,
+// but does not empty the buffer.
 pub fn (mut hb HTMLBuilder) str() string {
 	// have to do it funky like this because .str() empties buffer
 	// and the builder can't be used anymore according to the docs
@@ -267,19 +243,14 @@ pub fn (mut hb HTMLBuilder) str() string {
 	return str
 }
 
-///// string.Builder functions /////
+/***** string.Builder functions *****/
 
-/*
-write_bytes appends bytes to the accumulated buffer [deprecated: 'use Builder.write_ptr() instead']
-
+// write_bytes appends bytes to the accumulated buffer [deprecated: 'use Builder.write_ptr() instead']
 pub fn (mut hb HTMLBuilder) write_bytes(bytes byteptr, len int) {
 	hb.sb.write_bytes(bytes, len)
 }
-*/
 
-/*
-write_ptr writes len bytes provided byteptr to the accumulated buffer.
-*/
+// write_ptr writes len bytes provided byteptr to the accumulated buffer.
 [unsafe]
 pub fn (mut hb HTMLBuilder) write_ptr(ptr byteptr, len int) {
 	hb.sb.write_string('\t'.repeat(hb.indent_level))
@@ -288,77 +259,57 @@ pub fn (mut hb HTMLBuilder) write_ptr(ptr byteptr, len int) {
 	}
 }
 
-/*
-write_b appends a single data byte to the accumulated buffer.
-*/
+// write_b appends a single data byte to the accumulated buffer.
 pub fn (mut hb HTMLBuilder) write_b(data byte) {
 	hb.sb.write_string('\t'.repeat(hb.indent_level))
 	hb.sb.write_b(data)
 }
 
-/*
-write implements the Writer interface.
-*/
+// write implements the Writer interface.
 pub fn (mut hb HTMLBuilder) write(data []byte) ?int {
 	hb.sb.write_string('\t'.repeat(hb.indent_level))
 	return hb.sb.write(data)
 }
 
-/*
-write appends the string s to the buffer.
-*/
+// write appends the string s to the buffer.
 pub fn (mut hb HTMLBuilder) write_string(s string) {
 	hb.sb.write_string('\t'.repeat(hb.indent_level))
 	hb.sb.write_string(s)
 }
 
-/*
-go_back discards the last n bytes from the buffer.
-*/
+// go_back discards the last n bytes from the buffer.
 pub fn (mut hb HTMLBuilder) go_back(n int) {
 	hb.sb.go_back(n)
 }
 
-/*
-cut_last cuts the last n bytes from the buffer and returns them.
-*/
+// cut_last cuts the last n bytes from the buffer and returns them.
 pub fn (mut hb HTMLBuilder) cut_last(n int) string {
 	return hb.sb.cut_last(n)
 }
 
-/*
-go_back_to resets the buffer to the given position pos
-NB: pos should be < than the existing buffer length.
-*/
+// go_back_to resets the buffer to the given position pos
+// NB: pos should be < than the existing buffer length.
 pub fn (mut hb HTMLBuilder) go_back_to(pos int) {
 	hb.sb.go_back_to(pos)
 }
 
-/*
-writeln appends the string s, then a newline character.
-*/
+// writeln appends the string s, then a newline character.
 pub fn (mut hb HTMLBuilder) writeln(s string) {
 	hb.sb.write_string('\t'.repeat(hb.indent_level))
 	hb.sb.writeln(s)
 }
 
-/*
-buf == 'hello world' last_n(5) returns 'world'.
-*/
+// buf == 'hello world' last_n(5) returns 'world'.
 pub fn (mut hb HTMLBuilder) last_n(n int) string {
 	return hb.sb.last_n(n)
 }
 
-/*
-uf == 'hello world' after(6) returns 'world'.
-*/
+// buf == 'hello world' after(6) returns 'world'.
 pub fn (mut hb HTMLBuilder) after(n int) string {
 	return hb.sb.after(n)
 }
 
-/*
-free manually frees the contents of the buffer.
-*/
+// free manually frees the contents of the buffer.
 [unsafe]
 pub fn (mut hb HTMLBuilder) free() {
 	unsafe {
