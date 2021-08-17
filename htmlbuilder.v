@@ -138,7 +138,7 @@ __global:
 
 // new_builder creates a new instances of Builder.
 pub fn new_builder() HTMLBuilder {
-	return {
+	return HTMLBuilder{
 		sb: strings.new_builder(0)
 	}
 }
@@ -247,7 +247,7 @@ pub fn (mut hb HTMLBuilder) str() string {
 
 // write_bytes appends bytes to the accumulated buffer [deprecated: 'use Builder.write_ptr() instead']
 pub fn (mut hb HTMLBuilder) write_bytes(bytes byteptr, len int) {
-	hb.sb.write_bytes(bytes, len)
+	hb.sb.write_b(bytes)
 }
 
 // write_ptr writes len bytes provided byteptr to the accumulated buffer.
